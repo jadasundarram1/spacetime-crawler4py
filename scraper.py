@@ -1,6 +1,7 @@
 import re
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
@@ -18,14 +19,16 @@ def extract_next_links(url, resp):
     # resp.raw_response: this is where the page actually is. More specifically, the raw_response has two parts:
     #         resp.raw_response.url: the url, again
     #         resp.raw_response.content: the content of the page!
-    soup = BeautifulSoup(resp.raw_response.content, 'html parser')
+    soup = BeautifulSoup(resp.raw_response.content, 'lxml')
     # Find all hyperlinks
     links = soup.findAll('a')
-    # Get href only. This will contain relative URLs (e.g. http://www.yourdomain.org/images/picture.gif)
+    # Get href only. This will contain relative URLs (e.g. ../images/picture.gif)
     hrefs = [link.get('href') for link in links]
+    # Convert to absolute (e.g. http://www.yourdomain.org/images/picture.gif)
+    absolute_links = [urljoin(url, href) for href in hrefs if href]
 
     # Return a list with the hyperlinks (as strings) scrapped from resp.raw_response.content
-    return hrefs
+    return absolute_links
 
 def is_valid(url):
     # Decide whether to crawl this url or not. 

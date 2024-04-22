@@ -1,5 +1,6 @@
 import re
 from urllib.parse import urlparse
+from urllib import robotparser
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
@@ -17,12 +18,40 @@ def extract_next_links(url, resp):
     # Return a list with the hyperlinks (as strings) scrapped from resp.raw_response.content
     return list()
 
+robot_instances = {}
+
+def allowed_by_robots(parsed_url, raw_url):
+    try:
+        #get domain of website
+        web_domain = parsed_url.scheme + "://" + parsed_url.netloc
+
+        #check if robots.txt has already been parsed for this url
+        if web_domain in robot_instances:
+            robot = robot_instances[web_domain]
+
+        #if not create a new instance of robotparser to check if allowed to crawl
+        else:
+            robot = robotparser.RobotFileParser()
+            robot.set_url(web_domain + "/robots.txt")
+            robot.read()
+            robot_instances[web_domain] = robot
+        
+        #if every useragent is allowed to parse this url, return true, else return false
+        return robot.can_fetch("*", raw_url)
+    
+    except Exception as e:
+        print("There was an error: ", e)
+        return True
+
+
 def is_valid(url):
     # Decide whether to crawl this url or not. 
     # If you decide to crawl it, return True; otherwise return False.
     # There are already some conditions that return False.
     try:
         parsed = urlparse(url)
+        if not allowed_by_robots(parsed, url):
+            return False
         if parsed.path not in set([".ics.uci.edu/", ".cs.uci.edu/", ".informatics.uci.edu/", ".stat.uci.edu/"]):
             return False
         if parsed.scheme not in set(["http", "https"]):

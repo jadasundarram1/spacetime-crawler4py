@@ -21,7 +21,7 @@ def extract_next_links(url, resp):
     soup = BeautifulSoup(resp.raw_response.content, 'html parser')
     # Find all hyperlinks
     links = soup.findAll('a')
-    # Get href only. This will contain absolute URLs (e.g. http://www.yourdomain.org/images/picture.gif)
+    # Get href only. This will contain relative URLs (e.g. http://www.yourdomain.org/images/picture.gif)
     hrefs = [link.get('href') for link in links]
 
     # Return a list with the hyperlinks (as strings) scrapped from resp.raw_response.content

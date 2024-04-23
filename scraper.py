@@ -62,8 +62,6 @@ def is_valid(url):
     # There are already some conditions that return False.
     try:
         parsed = urlparse(url)
-        if not allowed_by_robots(parsed, url):
-            return False
         if parsed.path not in set([".ics.uci.edu/", ".cs.uci.edu/", ".informatics.uci.edu/", ".stat.uci.edu/"]):
             return False
         if parsed.scheme not in set(["http", "https"]):

@@ -2,34 +2,34 @@ import re
 from urllib.parse import urlparse
 from urllib import robotparser
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+from urllib.parse import urldefrag
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
     return [link for link in links if is_valid(link)]
 
 def extract_next_links(url, resp):
-    # Implementation required.
+    hyperlinks = []
+    # Implementation required.ZZ
     # url: the URL that was used to get the page
     # resp.url: the actual url of the page
     # resp.status: the status code returned by the server. 200 is OK, you got the page. Other numbers mean that there was some kind of problem.
     if resp.status != 200:
         return []
     # TODO: resp.error: when status is not 200, you can check the error here, if needed.
-
     # resp.raw_response: this is where the page actually is. More specifically, the raw_response has two parts:
     #         resp.raw_response.url: the url, again
     #         resp.raw_response.content: the content of the page!
-    soup = BeautifulSoup(resp.raw_response.content, 'lxml')
+    soup = BeautifulSoup(resp.raw_response.content, 'html.parser')
     # Find all hyperlinks
     links = soup.findAll('a')
-    # Get href only. This will contain relative URLs (e.g. ../images/picture.gif)
-    hrefs = [link.get('href') for link in links]
-    # Convert to absolute (e.g. http://www.yourdomain.org/images/picture.gif)
-    absolute_links = [urljoin(url, href) for href in hrefs if href]
-
-    # Return a list with the hyperlinks (as strings) scrapped from resp.raw_response.content
-    return absolute_links
+    # Get href and defragment url, use 0 index to get first element 
+    for link in links:
+        hyperlink = urldefrag(link.get('href'))[0]
+        #if hyperlink is not an empty str, append to hyperlink list
+        if hyperlink:
+            hyperlinks.append(hyperlink)
+    return hyperlinks
 
 robot_instances = {}
 
@@ -63,7 +63,13 @@ def is_valid(url):
     # There are already some conditions that return False.
     try:
         parsed = urlparse(url)
-        if parsed.path not in set([".ics.uci.edu/", ".cs.uci.edu/", ".informatics.uci.edu/", ".stat.uci.edu/"]):
+        if ".ics.uci.edu" not in parsed.netloc:
+            return False
+        elif ".cs.uci.edu/" not in parsed.netloc:
+            return False
+        elif ".informatics.uci.edu/" not in parsed.netloc:
+            return False
+        elif ".stat.uci.edu/" not in parsed.netloc:
             return False
         if parsed.scheme not in set(["http", "https"]):
             return False

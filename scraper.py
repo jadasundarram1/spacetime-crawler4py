@@ -10,7 +10,7 @@ def scraper(url, resp):
 
 def extract_next_links(url, resp):
     hyperlinks = []
-    # Implementation required.ZZ
+    # Implementation required
     # url: the URL that was used to get the page
     # resp.url: the actual url of the page
     # resp.status: the status code returned by the server. 200 is OK, you got the page. Other numbers mean that there was some kind of problem.
@@ -63,13 +63,7 @@ def is_valid(url):
     # There are already some conditions that return False.
     try:
         parsed = urlparse(url)
-        if ".ics.uci.edu" not in parsed.netloc:
-            return False
-        elif ".cs.uci.edu/" not in parsed.netloc:
-            return False
-        elif ".informatics.uci.edu/" not in parsed.netloc:
-            return False
-        elif ".stat.uci.edu/" not in parsed.netloc:
+        if (".ics.uci.edu" not in parsed.netloc) and (".cs.uci.edu" not in parsed.netloc) and (".informatics.uci.edu" not in parsed.netloc) and (".stat.uci.edu" not in parsed.netloc):
             return False
         if parsed.scheme not in set(["http", "https"]):
             return False

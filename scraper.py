@@ -1,6 +1,6 @@
 import re
 from urllib.parse import urlparse
-from urllib.parse import robotparser
+from urllib import robotparser
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 

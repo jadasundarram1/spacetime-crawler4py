@@ -1,39 +1,23 @@
 import re
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from urllib import robotparser
 from bs4 import BeautifulSoup
 from urllib.parse import urldefrag
+from detector import URLDuplicateDetector
+from simhash import Simhash
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
     return [link for link in links if is_valid(link)]
 
-def extract_next_links(url, resp):
-    hyperlinks = []
-    # Implementation required
-    # url: the URL that was used to get the page
-    # resp.url: the actual url of the page
-    # resp.status: the status code returned by the server. 200 is OK, you got the page. Other numbers mean that there was some kind of problem.
-    if resp.status != 200:
-        return []
-    # TODO: resp.error: when status is not 200, you can check the error here, if needed.
-    # resp.raw_response: this is where the page actually is. More specifically, the raw_response has two parts:
-    #         resp.raw_response.url: the url, again
-    #         resp.raw_response.content: the content of the page!
-    soup = BeautifulSoup(resp.raw_response.content, 'html.parser')
-    # Find all hyperlinks
-    links = soup.findAll('a')
-    # Get href and defragment url, use 0 index to get first element 
-    for link in links:
-        hyperlink = urldefrag(link.get('href'))[0]
-        #if hyperlink is not an empty str, append to hyperlink list
-        if hyperlink:
-            hyperlinks.append(hyperlink)
-    return hyperlinks
-
+#dict of each url's robot parser instance
 robot_instances = {}
 
-def allowed_by_robots(parsed_url, raw_url):
+#dict of each url's length
+url_content_length = {}
+
+def allowed_by_robots(raw_url):
+    parsed_url = urlparse(raw_url)
     try:
         #get domain of website
         web_domain = parsed_url.scheme + "://" + parsed_url.netloc
@@ -55,6 +39,54 @@ def allowed_by_robots(parsed_url, raw_url):
     except Exception as e:
         print("There was an error: ", e)
         return True
+    
+url_duplicate_detector = URLDuplicateDetector()
+
+def extract_next_links(url, resp):
+    hyperlinks = []
+    # Implementation required
+    # url: the URL that was used to get the page
+    # resp.url: the actual url of the page
+    # resp.status: the status code returned by the server. 200 is OK, you got the page. Other numbers mean that there was some kind of problem.
+    if resp.status != 200:
+        return []
+    
+    elif resp.status == 204:
+        return []
+    #if robots.txt does not allow crawling return an empty list
+    if not allowed_by_robots(url):
+        return[]
+    
+    #decode url content to find simhash index
+    url_content = resp.raw_response.content.decode('utf-8')
+    
+    #get the simhash index of page
+    simhash = Simhash(url_content)
+    
+    # TODO: resp.error: when status is not 200, you can check the error here, if needed.
+    # resp.raw_response: this is where the page actually is. More specifically, the raw_response has two parts:
+    #         resp.raw_response.url: the url, again
+    #         resp.raw_response.content: the content of the page!
+    
+    if not url_duplicate_detector.is_duplicate(simhash):
+        soup = BeautifulSoup(resp.raw_response.content, 'html.parser')
+        
+        #get length of url content to add to dict
+        len_content = len(soup.get_text().split())
+        url_content_len[len_content] = url
+        
+        # Find all hyperlinks
+        links = soup.findAll('a')
+        # Get href and defragment url, use 0 index to get first element 
+        for link in links:
+            href = link.get('href')
+            if href:
+                absolute_url = urljoin(resp.url, href)
+                absolute_url_defragmented = urldefrag(absolute_url)[0]
+                hyperlinks.append(absolute_url_defragmented)
+                #Add link and its simhash fingerprint to index
+                url_duplicate_detector.add_to_sh_index(absolute_url_defragmented, simhash)
+    return hyperlinks
 
 
 def is_valid(url):
@@ -65,8 +97,13 @@ def is_valid(url):
         parsed = urlparse(url)
         if (".ics.uci.edu" not in parsed.netloc) and (".cs.uci.edu" not in parsed.netloc) and (".informatics.uci.edu" not in parsed.netloc) and (".stat.uci.edu" not in parsed.netloc):
             return False
+        
         if parsed.scheme not in set(["http", "https"]):
             return False
+        
+        if parsed.path.endswith(('.pdf', '.jpg', '.jpeg', '.png', '.ppt', '.pptx', '.doc', '.docx')):
+            return False
+        
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
             + r"|png|tiff?|mid|mp2|mp3|mp4"
@@ -80,3 +117,4 @@ def is_valid(url):
     except TypeError:
         print ("TypeError for ", parsed)
         raise
+

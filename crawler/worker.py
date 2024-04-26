@@ -5,7 +5,7 @@ from utils.download import download
 from utils import get_logger
 import scraper
 import time
-
+from urllib.parse import urldefrag
 
 class Worker(Thread):
     def __init__(self, worker_id, config, frontier):
@@ -21,14 +21,16 @@ class Worker(Thread):
         unique_urls = set()
         while True:
             tbd_url = self.frontier.get_tbd_url()
-            print(tbd_url)
+            
             if not tbd_url:
                 self.logger.info("Frontier is empty. Stopping Crawler.")
                 break
-            if tbd_url in unique_urls:
+                
+            if (urldefrag(tbd_url)[0]) in unique_urls:
                 self.logger.info(f"URL {tbd_url} has already been visited.")
                 self.frontier.mark_url_complete(tbd_url)
                 continue
+                
             resp = download(tbd_url, self.config, self.logger)
             self.logger.info(
                 f"Downloaded {tbd_url}, status <{resp.status}>, "
@@ -37,6 +39,7 @@ class Worker(Thread):
             for scraped_url in scraped_urls:
                 self.frontier.add_url(scraped_url)
             self.frontier.mark_url_complete(tbd_url)
-            unique_urls.add(tbd_url)
+            unique_urls.add(urldefrag(tbd_url)[0])
             time.sleep(self.config.time_delay)
-        print(len(unique_urls))
+        print(f"Number of unique pages found: {len(unique_urls)}")
+        

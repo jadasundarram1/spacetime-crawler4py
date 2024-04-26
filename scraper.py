@@ -77,7 +77,7 @@ def extract_next_links(url, resp):
         
         #get length of url content to add to dict
         len_content = len(soup.get_text().split())
-        url_content_len[len_content] = url
+        url_content_length[len_content] = url
         
         # Find all hyperlinks
         links = soup.findAll('a')

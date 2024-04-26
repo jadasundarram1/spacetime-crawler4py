@@ -16,6 +16,10 @@ robot_instances = {}
 #dict of each url's length
 url_content_length = {}
 
+def get_max_length_url():
+    a = max(url_content_length)
+    return [a, url_content_length[a]]
+
 def allowed_by_robots(raw_url):
     parsed_url = urlparse(raw_url)
     try:

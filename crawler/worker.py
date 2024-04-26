@@ -42,4 +42,4 @@ class Worker(Thread):
             unique_urls.add(urldefrag(tbd_url)[0])
             time.sleep(self.config.time_delay)
         print(f"Number of unique pages found: {len(unique_urls)}")
-        
+        print (f"Longest page found was {scraper.get_max_length_url()[1]} with {scraper.get_max_length_url()[0]} words.")

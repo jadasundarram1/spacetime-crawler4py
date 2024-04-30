@@ -1,4 +1,4 @@
-import re, crawler.frontier, requests
+import re, crawler.frontier, httpx
 from urllib.parse import urlparse, urljoin, parse_qs
 from urllib import robotparser
 from bs4 import BeautifulSoup
@@ -19,10 +19,18 @@ url_content_length = {}
 
 def fetch(url):
     try:
-        response = requests.get(url)
+        # getting response from the url
+        response = httpx.get(url)
+        # Return the response object
         return response
-    except requests.RequestException as e:
-        print(f"Error fetching {url}: {e}")
+    except httpx.HTTPError as error:
+        # Handle HTTP errors
+        print(f"Error fetching {url}: {error}")
+        return None
+    except Exception as error:
+        # Handle other exceptions
+        print(f"Error fetching {url}: {error}")
+        return None
 
 def get_max_length_url():
     a = max(url_content_length)
@@ -51,7 +59,7 @@ def allowed_by_robots(raw_url):
     except Exception as e:
         print("There was an error: ", e)
         return True
-    
+
 url_duplicate_detector = URLDuplicateDetector()
 
 def extract_next_links(url, resp, max_redirects = 10):

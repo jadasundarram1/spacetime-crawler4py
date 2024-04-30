@@ -1,10 +1,11 @@
-import re
-from urllib.parse import urlparse, urljoin
+import re, crawler.frontier, requests
+from urllib.parse import urlparse, urljoin, parse_qs
 from urllib import robotparser
 from bs4 import BeautifulSoup
 from urllib.parse import urldefrag
 from detector import URLDuplicateDetector
 from simhash import Simhash
+
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
@@ -15,6 +16,13 @@ robot_instances = {}
 
 #dict of each url's length
 url_content_length = {}
+
+def fetch(url):
+    try:
+        response = requests.get(url)
+        return response
+    except requests.RequestException as e:
+        print(f"Error fetching {url}: {e}")
 
 def get_max_length_url():
     a = max(url_content_length)
@@ -46,21 +54,39 @@ def allowed_by_robots(raw_url):
     
 url_duplicate_detector = URLDuplicateDetector()
 
-def extract_next_links(url, resp):
+def extract_next_links(url, resp, max_redirects = 10):
     hyperlinks = []
     # Implementation required
     # url: the URL that was used to get the page
     # resp.url: the actual url of the page
     # resp.status: the status code returned by the server. 200 is OK, you got the page. Other numbers mean that there was some kind of problem.
+
+    original_url = url
+    while 300 <= resp.status < 400 and max_redirects > 0:
+        # Handle redirection
+        redirected_url = resp.headers.get('Location')
+        if redirected_url:
+            print(f"Redirected from {url} to {redirected_url}")
+            hyperlinks.append(redirected_url)
+            #Reduce max_directs by 1
+            max_redirects -= 1
+            #perform the next request to next redirection
+            resp = fetch(redirected_url)
+            #update the current URL to the redirected URL
+            url = redirected_url
+        else:
+            break
+    #After redirections, check if final URL is diffrent from original URL
+    if url != original_url:
+        #update frontier with final URL after all redirects
+        crawler.Frontier.add_url(url)
     if resp.status != 200:
-        return []
-    
-    elif resp.status == 204:
-        return []
-    #if robots.txt does not allow crawling return an empty list
+        return []  # Other status codes indicate an error or other issues
+
+    # Continue processing for 200 OK responses, if robots.txt does not, allow crawling return an empty list
     if not allowed_by_robots(url):
-        return[]
-    
+        return []
+
     #decode url content to find simhash index
     url_content = resp.raw_response.content.decode('utf-8')
     
@@ -92,7 +118,28 @@ def extract_next_links(url, resp):
                 url_duplicate_detector.add_to_sh_index(absolute_url_defragmented, simhash)
     return hyperlinks
 
+def is_calendar_url(url):
+    """
+    Checks if the normalized url is a calendar or not. If it is it returns
+    False
+    """
+    # URL Pattern Matching
+    date_pattern = re.compile(r"\d{4}-\d{2}-\d{2}")  # Matches YYYY-MM-DD in URL
+    calendar_keywords = re.compile(r"\b(calendar|event|schedule)\b", re.IGNORECASE)
 
+    # Query Parameter Analysis
+    query_params = parse_qs(urlparse(url).query)
+    date_related_keys = {'date', 'month', 'year'}
+
+    # Check for date patterns or calendar-related keywords in the URL path
+    if date_pattern.search(url) or calendar_keywords.search(url):
+        return True
+
+    # Check for date-related query parameters
+    if any(key in date_related_keys for key in query_params):
+        return True
+
+    return False
 def is_valid(url):
     # Decide whether to crawl this url or not. 
     # If you decide to crawl it, return True; otherwise return False.
@@ -107,7 +154,10 @@ def is_valid(url):
         
         if parsed.path.endswith(('.pdf', '.jpg', '.jpeg', '.png', '.ppt', '.pptx', '.doc', '.docx')):
             return False
-        
+
+        if is_calendar_url(parsed):
+            return False
+
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
             + r"|png|tiff?|mid|mp2|mp3|mp4"

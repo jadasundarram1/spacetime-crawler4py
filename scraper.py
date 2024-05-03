@@ -62,9 +62,11 @@ def allowed_by_robots(raw_url):
 
 url_duplicate_detector = URLDuplicateDetector()
 
+depth_dict = {}
+max_depth = 50
+
 def extract_next_links(url, resp, max_redirects = 10):
     hyperlinks = []
-    # Implementation required
     # url: the URL that was used to get the page
     # resp.url: the actual url of the page
     # resp.status: the status code returned by the server. 200 is OK, you got the page. Other numbers mean that there was some kind of problem.
@@ -90,13 +92,36 @@ def extract_next_links(url, resp, max_redirects = 10):
         crawler.Frontier.add_url(url)
     if resp.status != 200:
         return []  # Other status codes indicate an error or other issues
+    
+    if resp.status in range(400, 452):
+        return []
 
     # Continue processing for 200 OK responses, if robots.txt does not, allow crawling return an empty list
     if not allowed_by_robots(url):
         return []
+    
+    #split url into base url and query string
+    if '?' in url:
+        base_url, _ = url.split('?', 1)
+    elif '/' in url and len(url.split('/')) >= 8:
+        url_parts = url.split('/')
+        base_url = '/'.join(url_parts[:-2])
+    else:
+        base_url = url
+    
+    # Update depth for the base URL
+    depth_dict[base_url] = depth_dict.get(base_url, 0) + 1
+    
+    # Check if depth exceeds the limit
+    if depth_dict[base_url] > max_depth:
+        return []
 
     #decode url content to find simhash index
-    url_content = resp.raw_response.content.decode('utf-8')
+    try:
+        url_content = resp.raw_response.content.decode('utf-8')
+        
+    except UnicodeDecodeError:
+        return []
     
     #get the simhash index of page
     simhash = Simhash(url_content)
@@ -108,11 +133,11 @@ def extract_next_links(url, resp, max_redirects = 10):
     
     if not url_duplicate_detector.is_duplicate(simhash):
         soup = BeautifulSoup(resp.raw_response.content, 'html.parser')
-        
+
         #get length of url content to add to dict
         len_content = len(soup.get_text().split())
         url_content_length[len_content] = url
-        
+
         # Find all hyperlinks
         links = soup.findAll('a')
         # Get href and defragment url, use 0 index to get first element 
@@ -136,7 +161,8 @@ def is_calendar_url(url):
     calendar_keywords = re.compile(r"\b(calendar|event|schedule)\b", re.IGNORECASE)
 
     # Query Parameter Analysis
-    query_params = parse_qs(urlparse(url).query)
+    parsed_url = urlparse(url)
+    query_params = parse_qs(parsed_url.query)
     date_related_keys = {'date', 'month', 'year'}
 
     # Check for date patterns or calendar-related keywords in the URL path
@@ -163,7 +189,7 @@ def is_valid(url):
         if parsed.path.endswith(('.pdf', '.jpg', '.jpeg', '.png', '.ppt', '.pptx', '.doc', '.docx')):
             return False
 
-        if is_calendar_url(parsed):
+        if is_calendar_url(url):
             return False
 
         return not re.match(

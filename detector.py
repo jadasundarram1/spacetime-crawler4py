@@ -1,7 +1,7 @@
 from simhash import SimhashIndex, Simhash
 
 class URLDuplicateDetector:
-    #seting threshold to 3: lower threshold means more sensitive, less urls received
+    #setting threshold to 3: lower threshold means more sensitive, less urls received
     def __init__(self, threshold = 3):
         self.simhash_index = SimhashIndex([], k=threshold)
         

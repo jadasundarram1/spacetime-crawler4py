@@ -17,6 +17,8 @@ robot_instances = {}
 #dict of each url's length
 url_content_length = {}
 
+not_allowed = []
+
 def fetch(url):
     try:
         # getting response from the url
@@ -38,10 +40,14 @@ def get_max_length_url():
 
 def allowed_by_robots(raw_url):
     parsed_url = urlparse(raw_url)
+    
+    #get domain of website
+    web_domain = parsed_url.scheme + "://" + parsed_url.netloc
+    
     try:
-        #get domain of website
-        web_domain = parsed_url.scheme + "://" + parsed_url.netloc
-
+        if web_domain in not_allowed:
+            return False
+        
         #check if robots.txt has already been parsed for this url
         if web_domain in robot_instances:
             robot = robot_instances[web_domain]
@@ -57,8 +63,9 @@ def allowed_by_robots(raw_url):
         return robot.can_fetch("*", raw_url)
     
     except Exception as e:
+        not_allowed.append(web_domain)
         print("There was an error: ", e)
-        return True
+        return False
 
 url_duplicate_detector = URLDuplicateDetector()
 
@@ -105,7 +112,7 @@ def extract_next_links(url, resp, max_redirects = 10):
         base_url, _ = url.split('?', 1)
     elif '/' in url and len(url.split('/')) >= 8:
         url_parts = url.split('/')
-        base_url = '/'.join(url_parts[:-2])
+        base_url = '/'.join(url_parts[:-3])
     else:
         base_url = url
     

@@ -49,7 +49,13 @@ class Worker(Thread):
             self.logger.info(
                 f"Downloaded {tbd_url}, status <{resp.status}>, "
                 f"using cache {self.config.cache_server}.")
-            scraped_urls = scraper.scraper(tbd_url, resp)
+            try:
+                scraped_urls = scraper.scraper(tbd_url, resp)
+            
+            except Exception as e:
+                self.frontier.mark_url_complete(tbd_url)
+                continue
+                
             for scraped_url in scraped_urls:
                 self.frontier.add_url(scraped_url)
             self.frontier.mark_url_complete(tbd_url)

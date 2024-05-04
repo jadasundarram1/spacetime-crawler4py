@@ -1,0 +1,231 @@
+﻿Assignment 2 Report
+
+
+1. How many unique pages did you find? Uniqueness for the purposes of this assignment is ONLY established by the URL, but discarding the fragment part. So, for example, http://www.ics.uci.edu#aaa and http://www.ics.uci.edu#bbb are the same URL. Even if you implement additional methods for textual similarity detection, please keep considering the above definition of unique pages for the purposes of counting the unique pages in this assignment.
+                
+Number of unique pages found: 27517
+
+
+2. What is the longest page in terms of the number of words? (HTML markup doesn’t count as words)
+
+
+The longest page found was http://www.ics.uci.edu/~kay/wordlist.txt with 385018 words.
+
+
+3. What are the 50 most common words in the entire set of pages crawled under these domains ? (Ignore English stop words, which can be found, for example, here
+
+
+50 Most Common Words
+	Research
+	View
+	Computer
+	Data
+	Science
+	School
+	Informatics
+	Spotlights
+	Reply
+	Faculty
+	Says:
+	B.S
+	ICS
+	Projects
+	Student
+	Engineering
+	Graduate
+	May
+	Undergraduate
+	Alumni
+	Information
+	April
+	Software
+	Students
+	UCI
+	Pm
+	News
+	Contact
+	Events
+	March
+	Learning
+	Machine
+	Ramesh
+	Ph.D.
+	August
+	Department
+	June
+	Donald
+	September
+	January
+	                                                
+4. Links to an external site.
+        
+5. Submit the list of common words ordered by frequency.
+
+
+        See list above
+
+
+6. How many subdomains did you find in the ics.uci.edu domain? Submit the list of subdomains ordered alphabetically and the number of unique pages detected in each subdomain. The content of this list should be lines containing URL, number, for example:
+http://vision.ics.uci.edu, 10 (not the actual number here)
+
+
+accessibility,ics.ics.uci.edu, 6
+acoi,ics.ics.uci.edu, 62
+aiclub,ics.ics.uci.edu, 2
+alumni,ics.ics.uci.edu, 6
+archive,ics.ics.uci.edu, 701
+archive-beta,ics.ics.uci.edu, 3
+asterix,ics.ics.uci.edu, 13
+asterixdb,ics.ics.uci.edu, 2
+benzene-34,ics.ics.uci.edu, 1
+betapro,proteomics,ics.ics.uci.edu, 3
+cbcl,ics.ics.uci.edu, 956
+cbcl-1,ics.ics.uci.edu, 1
+cbclwiki,ics.ics.uci.edu, 3
+cdb,ics.ics.uci.edu, 50
+cert,ics.ics.uci.edu, 19
+checkin,ics.ics.uci.edu, 5
+checkmate,ics.ics.uci.edu, 1
+chemdb,ics.ics.uci.edu, 1
+chenli,ics.ics.uci.edu, 10
+cherry,ics.ics.uci.edu, 1
+chime,ics.ics.uci.edu, 1
+circadiomics,ics.ics.uci.edu, 9
+closeup,ics.ics.uci.edu, 1
+cloudberry,ics.ics.uci.edu, 2
+cml,ics.ics.uci.edu, 82
+cocoa-krispies,ics.ics.uci.edu, 1
+codeexchange,ics.ics.uci.edu, 1
+computableplant,ics.ics.uci.edu, 94
+contact,ics.ics.uci.edu, 2
+contact14,ics.ics.uci.edu, 1
+containers,ics.ics.uci.edu, 1
+coronavirustwittermap,ics.ics.uci.edu, 1
+create,ics.ics.uci.edu, 5
+cwicsocal18,ics.ics.uci.edu, 10
+cyberclub,ics.ics.uci.edu, 1
+cybert,ics.ics.uci.edu, 7
+datalab,ics.ics.uci.edu, 1
+dblp,ics.ics.uci.edu, 2
+dgillen,ics.ics.uci.edu, 19
+duttgroup,ics.ics.uci.edu, 70
+dynamo,ics.ics.uci.edu, 1
+elms,ics.ics.uci.edu, 1
+emj,ics.ics.uci.edu, 39
+emj-pc,ics.ics.uci.edu, 1
+evoke,ics.ics.uci.edu, 1
+fano,ics.ics.uci.edu, 24
+flamingo,ics.ics.uci.edu, 50
+fr,ics.ics.uci.edu, 9
+frost,ics.ics.uci.edu, 3
+futurehealth,ics.ics.uci.edu, 121
+gitlab,ics.ics.uci.edu, 5372
+gonet,genomics,ics.ics.uci.edu, 1
+grafana,ics.ics.uci.edu, 1
+grafana-infra-blue,ics.ics.uci.edu, 1
+grape,ics.ics.uci.edu, 26
+graphics,ics.ics.uci.edu, 12
+graphmod,ics.ics.uci.edu, 15
+hack,ics.ics.uci.edu, 1
+hai,ics.ics.uci.edu, 6
+helpdesk,ics.ics.uci.edu, 4
+hobbes,ics.ics.uci.edu, 1
+hombao,ics.ics.uci.edu, 1
+hpi,ics.ics.uci.edu, 1
+hub,ics.ics.uci.edu, 3
+i-sensorium,ics.ics.uci.edu, 6
+iasl,ics.ics.uci.edu, 2
+ibook,ics.ics.uci.edu, 1
+ieee,ics.ics.uci.edu, 1
+industryshowcase,ics.ics.uci.edu, 11
+informatics,ics.ics.uci.edu, 1
+instdav,ics.ics.uci.edu, 1
+intranet,ics.ics.uci.edu, 1
+ipubmed,ics.ics.uci.edu, 1
+isg,ics.ics.uci.edu, 2
+jgarcia,ics.ics.uci.edu, 20
+jujube,ics.ics.uci.edu, 2
+kdd,ics.ics.uci.edu, 1
+keys,ics.ics.uci.edu, 3
+labbie,ics.ics.uci.edu, 1
+luci,ics.ics.uci.edu, 5
+mailman,ics.ics.uci.edu, 2
+malek,ics.ics.uci.edu, 1
+map125,ics.ics.uci.edu, 1
+mapgrid,ics.ics.uci.edu, 1
+mcs,ics.ics.uci.edu, 2
+mdogucu,ics.ics.uci.edu, 7
+mds,ics.ics.uci.edu, 18
+metaviz,ics.ics.uci.edu, 1
+mhcid,ics.ics.uci.edu, 18
+mine10,ics.ics.uci.edu, 1
+mine5,ics.ics.uci.edu, 1
+mlphysics,ics.ics.uci.edu, 48
+mondego,ics.ics.uci.edu, 13
+motifmap,ics.ics.uci.edu, 2
+motifmap-rna,ics.ics.uci.edu, 2
+mse,ics.ics.uci.edu, 2
+mswe,ics.ics.uci.edu, 1
+mt-live,ics.ics.uci.edu, 1
+mupro,proteomics,ics.ics.uci.edu, 3
+nalini,ics.ics.uci.edu, 1
+ngs,ics.ics.uci.edu, 70
+old-reactions,ics.ics.uci.edu, 1
+omni,ics.ics.uci.edu, 1
+onboarding,ics.ics.uci.edu, 3
+password,ics.ics.uci.edu, 1
+pastebin,ics.ics.uci.edu, 1
+pasteur,ics.ics.uci.edu, 2
+pepito,proteomics,ics.ics.uci.edu, 5
+perennialpolycultures,ics.ics.uci.edu, 1
+pgadmin,ics.ics.uci.edu, 2
+phpmyadmin,ics.ics.uci.edu, 1
+plrg,ics.ics.uci.edu, 84
+prometheus-infra-blue,ics.ics.uci.edu, 1
+psearch,ics.ics.uci.edu, 4
+radicle,ics.ics.uci.edu, 6
+reactions,ics.ics.uci.edu, 7
+redmiles,ics.ics.uci.edu, 4
+rstudio-hub,ics.ics.uci.edu, 1
+satware,ics.ics.uci.edu, 1
+scale,ics.ics.uci.edu, 7
+sconce,ics.ics.uci.edu, 1
+scratch,proteomics,ics.ics.uci.edu, 4
+sdcl,ics.ics.uci.edu, 101
+se,ics.ics.uci.edu, 1
+seal,ics.ics.uci.edu, 45
+selectpro,proteomics,ics.ics.uci.edu, 7
+sherlock,ics.ics.uci.edu, 8
+sidepro,proteomics,ics.ics.uci.edu, 1
+sli,ics.ics.uci.edu, 767
+sourcerer,ics.ics.uci.edu, 3
+speedtest,ics.ics.uci.edu, 1
+sprout,ics.ics.uci.edu, 1
+stairs,ics.ics.uci.edu, 4
+statconsulting,ics.ics.uci.edu, 1
+support,ics.ics.uci.edu, 4
+svn,ics.ics.uci.edu, 1
+swiki,ics.ics.uci.edu, 1169
+tad,ics.ics.uci.edu, 3
+tastier,ics.ics.uci.edu, 1
+timesheet,ics.ics.uci.edu, 1
+tippersweb,ics.ics.uci.edu, 3
+tmbpro,ics.ics.uci.edu, 1
+transformativeplay,ics.ics.uci.edu, 14
+tutors,ics.ics.uci.edu, 44
+ugradforms,ics.ics.uci.edu, 1
+unite,ics.ics.uci.edu, 10
+vision,ics.ics.uci.edu, 215
+wics,ics.ics.uci.edu, 97
+wiki,ics.ics.uci.edu, 4589
+www,cert,ics.ics.uci.edu, 1
+www,cs.ics.uci.edu, 134
+www,graphics,ics.ics.uci.edu, 8
+www,ics.ics.uci.edu, 11881
+www,informatics.ics.uci.edu, 106
+www,informatics,ics.ics.uci.edu, 1
+www,isg,ics.ics.uci.edu, 1
+www,stat.ics.uci.edu, 38
+www-db,ics.ics.uci.edu, 2
+xtune,ics.ics.uci.edu, 6
+yarra,ics.ics.uci.edu, 1

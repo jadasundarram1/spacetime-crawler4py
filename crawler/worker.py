@@ -70,3 +70,6 @@ class Worker(Thread):
         print(f"Number of unique pages found: {len(self.frontier.unique_urls)}")
         print (f"Longest page found was {scraper.get_max_length_url()[1]} with {scraper.get_max_length_url()[0]} words.")
         print_subdomain_counts(self.subdomain_counts)
+        for k, v in sorted(scraper.commonWords.items(), key=lambda x : x[1], reverse = True)[0:50]: #sorting and getting top 50
+                        print(f'{k} - {v}')
+                        print('\n  ')
